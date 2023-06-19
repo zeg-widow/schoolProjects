@@ -15,7 +15,7 @@ rooms['hall2'] = {
         'desc':'a room with a table in the center upon the table you find a match\nWhat would you like to do?',
         'item':'match',
         'exits' : {
-            'EAST': rooms['hall1']
+            'EAST': 'hall1'
             }
                 }
 rooms['migoR'] = {
