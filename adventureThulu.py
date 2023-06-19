@@ -1,58 +1,73 @@
 #Caleb Root for IT-140
 
 #Dictionary nesting to create the rooms and items for the game
-rooms = {
-    'main hall':{'item':'LANTERN',
-                 'WEST':'west ward hall',
-                 'desc':'You find yourself in a strange dark corridor that seems to lead to many rooms. One, to the east, seems to have a strange sound coming from it. To the west, you see an ajar door leadng to another hall.\nWhat would you like to do?'
-                 },
-    'west ward hall':{'item' : 'CANDLE',
-                    'EAST': 'main hall',
-                    'desc':'Upon entering the hall you see '
-                    },
-    'migos room':{'item':'MI-GO WING',
-                  'NORTH':'west ward hall'
-                  },
+rooms = {}
 
+rooms['hall1'] = {
+        'desc':'You find yourself in a dimmly lit room with three ways forward. one to the west, one the north, the other east.\n what would you like to do?',
+        'item' : 'candle',
+            'exits': {'WEST':'hall2',
+            'NORTH':'villRoom',
+            'EAST':'migoR'
+        }
 }
-#Global var declarations
-congrats = 'Great job, you beat the game!'
-pcRoom = rooms['main hall']
-cardenal = ['NORTH','SOUTH','EAST','WEST']
-options = ['QUIT','GET','Y', 'N']
-pcItems = []
-usrName = input('Please enter your player character''s name\n')
-print('Welcome, {}, to my first game, HORROR HOTEL, a H.P. Lovecraft inspired text adventure game that runs in console. I hope that you will enjoy it.\n'.format(usrName))
-#function for updating the player room
-def updateRoom(direc):
-    if direc in pcRoom:
-        pcRoom == rooms[pcRoom[direc]]
-        return pcRoom, print('working')
-#function for looking
-def find(item):
-    if item in rooms[item]:
-        look = print('You see a {}\n'.format(pcRoom.get('item')))
-        return look, print('working')
-
-#desc func
-def desc():
-    print(pcRoom.get('desc'))
-#main game loop
-
+rooms['hall2'] = {
+        'desc':'a room with a table in the center upon the table you find a match\nWhat would you like to do?',
+        'item':'match',
+        'exits' : {
+            'EAST': rooms['hall1']
+            }
+                }
+rooms['migoR'] = {
+        'desc':'You see a dead Mi-Go! you should get some of its wing\nWhat would you like to do?',
+        'item':'mi-go wing',
+        'exits':{'WEST':'hall1',
+                 'EAST':'necroRoom'
+        }
+}
+rooms['necroRoom'] = {
+        'desc':'you see many dead bodies. Perhaps one has something of use on it\nWhat would you like to do?',
+        'item':'red hair',
+        'exits':{'WEST':'migoR',
+                 'EAST':'dungeon'
+        }
+}
+rooms['villRoom'] = {
+        'desc':'you have made it to the final chamber. the cultists have already started!\nThankfully, by combining all of the ingredients in the central culdron, you managed to stop the apocolypse'
+}
+rooms['dungeon'] = {
+        'desc':'you find yourself in a dark dank place\nmaybe some of this moss is useful',
+        'item':'moss',
+        'exits':{
+            'WEST':'necroRoom'
+        }
+}
+####################################
+#### funcs                      ####
+def move(curRoom, cardenal):
+    curRoom = pcRoom
+    if cardenal in curRoom:
+        curRoom = rooms[curRoom]['exits'][cardenal]
+        return curRoom
+### main loop                    ###
+pcRoom = rooms['hall1']
+direcs = ['NORTH','SOUTH','EAST','WEST']
+playerInv = []
 while True:
-    if pcItems == 6:
-        print(congrats)
-        exit()
-    else:
-        desc()                      #prints the description
-        usrIn = str(input())        #gets user input for the command
-        command = usrIn.capitalize()
-    
-        if command in cardenal:     
-            updateRoom(command)
-        elif command in options:
-            pass
-        elif command == 'LOOK':
-            find(command)
+    print(pcRoom['desc'])
+    choice = input().upper()
+    if pcRoom == 'villRoom':
+        if playerInv == ['red hair','mi-go wing','candle','match']:
+            print('Congrats! you have bested the cultists.')
+            exit()
         else:
-            print('Sorry, I did not unterstand what you meant. Have you tried GET, LOOK, Y, N, QUIT, or a direction?\n' )
+            print('you lost!')
+            exit()
+    elif choice in direcs:
+        move(pcRoom, choice)
+        print(pcRoom['desc'])
+    elif choice == 'GET':
+        playerInv.append(pcRoom['item'])
+        print('you now have: {playerInv}'.format)
+    else:
+        print('there was a problem')
